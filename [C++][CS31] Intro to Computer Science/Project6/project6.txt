@@ -1,0 +1,351 @@
+Gawun Kim
+CS31 FAll 2018
+Project 6
+
+
+
+
+
+
+Question 1.
+  a. --------------------------------------------------------------------------------------------------------------------------------------
+			++ The original code ++ 
+
+
+ int main()
+    {
+        int arr[3] = { 5, 10, 15 };
+        int* ptr = arr;
+
+        *ptr = 30;          					// set arr[0] to 30
+        *ptr + 1 = 20;      					// set arr[1] to 20    ====> it is wrong,  the target to make a pointer should be (ptr +1)
+								//			it should be  "*(ptr+1) = 20;"
+        ptr += 2;				
+        ptr[0] = 10;        					// set arr[2] to 10      ====> it is wrong, it should be  "*ptr = 10"
+
+        while (ptr >= arr)		   			//    ====> The whole while loop is wrong, this while loop will print the array from arr[2] to arr[0]
+        {
+            ptr--;			  		
+            cout << *ptr << endl;    				// print values
+        }
+    }
+			++ A fixed version of the program ++
+
+  int main() 
+  {
+	int arr[3] = { 5, 10, 15 };
+	int* ptr = arr;					
+
+	*ptr = 30;					// set arr[0] to 30
+	*(ptr + 1) = 20;				// set arr[1] to 20
+	ptr += 2;
+	*ptr = 10;					// set arr[2] to 10
+
+	int i = ptr - arr;				// the value would be 2
+	while ( i != -1 )				// the while loop will pass through when i is 2 => 1 => 0
+	{
+		cout << *(ptr -i) << endl;		// *(ptr -2)    => *(ptr -1) =>  *(ptr -0)
+		i--;
+	}
+  }
+  b. --------------------------------------------------------------------------------------------------------------------------------------
+		The original code is 
+			This code is not working.
+			The pointer "ptr" is declared in main and the function "findMax" should assign the max value address into ptr.
+			However, it is not properly working due to one parameter into findMax function.
+			It is "int* pToMax" and there is no reference(&). It is only coping the data and do process; it would not give any change after the function
+			& is necessary to deal with this function process since it is direct link to the memory location and it would change the value after
+			going out from this function  
+			
+
+
+void findMax(int arr[], int n, int*& pToMax)		// the only change is... inserting "&"(reference) between int* and pToMax
+    {							// if then, the  maximum value will be assigned into the address(pToMax) and
+        if (n <= 0) 					// the function would return the address of the maximum value  when going out of the findMax function with the given address
+            return;      // no items, no maximum!
+    
+        pToMax = arr;
+
+        for (int i = 1; i < n; i++)
+        {
+            if (arr[i] > *pToMax)
+                 pToMax = arr + i;
+        }
+    }       
+
+    int main()
+    {
+        int nums[4] = { 5, 3, 15, 6 };
+        int* ptr;
+
+        findMax(nums, 4, ptr);
+        cout << "The maximum is at address " << ptr << endl;
+        cout << "It's at position " << ptr - nums << endl;
+        cout << "Its value is " << *ptr << endl;
+    }
+  c. ---------------------------------------------------------------------------------------------------------------------------------------
+		The original code is 
+			This code is incorrect. This because, in the main, ptr is declared in int pointer but does not have any target(object) to point.
+			 
+		The original code
+
+void computeCube(int n, int* ncubed)
+    {
+        *ncubed = n * n * n;
+    }
+
+    int main()
+    {
+        int* ptr;
+        computeCube(5, ptr);
+        cout << "Five cubed is " << *ptr << endl;
+    }	
+
+		++ A fixed code(change only in main function) is
+				I declare ptr with "int" (not with "int*") since it would allow ptr to have address and its object.
+
+		
+	int main()
+	{
+	  int ptr;					// make ptr have just int variable not address.
+	  computeCube(5,&ptr);				// calling the address of ptr and going into the function
+	  cout << "Five cubed is " << ptr << endl;		
+	}
+  d. -------------------------------------------------------------------
+		The original code 
+			The code is incorrect.
+			The objective of this code is comparison of two strings, whether they are same or not.
+			However, the concept of pointer is not used when comparing the value(char) in each address.
+						|-> is for the value from the address of array.
+
+
+    bool strequal(const char str1[], const char str2[])
+    {
+        while (str1 != 0  &&  str2 != 0)
+        {
+            if (str1 != str2)  // compare corresponding characters
+                return false;
+            str1++;            // advance to the next character
+            str2++;
+        }
+        return str1 == str2;   // both ended at same time?
+    }
+
+    int main()
+    {
+        char a[15] = "Zhou";
+        char b[15] = "Zou";
+
+        if (strequal(a,b))
+            cout << "They're the same person!\n";
+    }
+
+		++ A fixed code 
+			I only added some stars in three lines. 
+				- while (str1 != 0  &&  str2 != 0)
+				- if (str1 != str2)
+				-  return str1 == str2;	
+
+
+	bool strequal(const char str1[], const char str2[])
+	{
+	  while(*str1 != '\0' && *str2 != '\0')		// the loop keeps working one of string are done
+	  {
+ 	   if(*str1 != *str2)				// if each character are different and pointer needs to compare the values 
+		return false;
+	   str1++;
+	   str2++;	
+	  }
+	 return (*str1 == *str2);			// the end of line ('\0') would be same and it is also used pointer to compare the value.
+	}
+  e. -------------------------------------------------------------------
+		
+		In this program, there is a problem in function(int* getPtrToArray(int& m)).
+		In the function, array(anArray[100]) is declared.  From anArray[0], it is initialized to 100 to anArray[99], which is initialized to 1.
+									for example, anArray[0] = 100, anArray[1] = 99, anArray[2] = 98 .... anArray[98] = 2, anArray[99] = 1
+		However, all the datas and addresses are saved into anArray only into the function and this data would be useless outside of the function.
+		Even though, it is sending out some value from the function, it is not successfully working in main; since saved datas and addressses are only in the function.
+		so that getPtrToArray(n) does not make proper output that a user expeected. 
+
+ #include <iostream>
+    using namespace std;
+
+    int* nochange(int* p)
+    {
+        return p;
+    }
+
+    int* getPtrToArray(int& m)
+    {
+        int anArray[100];			// problem of the code
+        for (int j = 0; j < 100; j++)
+            anArray[j] = 100-j;
+        m = 100;
+        return nochange(anArray);
+    }
+
+    void f()
+    {
+        int junk[100];
+        for (int k = 0; k < 100; k++)
+            junk[k] = 123400000 + k;
+        junk[50]++;
+    }
+
+    int main()
+    {
+        int n;
+        int* ptr = getPtrToArray(n);
+        f();
+        for (int i = 0; i < 3; i++)
+            cout << ptr[i] << ' ';
+        for (int i = n-3; i < n; i++)
+            cout << ptr[i] << ' ';
+        cout << endl;
+    }
+    
+-------------------------------------------------------------------
+
+Question 2.
+  a.	double* cat
+  b.	double mouse[5];
+  c.	cat = (mouse+4);
+  d.	*cat = 25;
+  e.	*(mouse+3) = 42;
+  f.	cat = (cat-3);
+  g.	cat[1] = 27;
+  h.	cat[0] = 54;
+  i.	bool b = (*cat == *(cat+1));
+  j.	bool d = ( cat == &mouse[0]);
+-------------------------------------------------------------------
+
+Question 3.
+  a. -------------------------------------------------------------------
+	double mean(const double* scores, int numScores)
+	{
+	  double tot = 0;
+	const double* ptr = scores;
+	  int x = 0;
+	  while( x != numScores )
+	  {
+		tot+=*(ptr+x);
+		x++;
+	  }
+	 return (tot/numScores);
+	}
+  b. -------------------------------------------------------------------
+	const char* findTheChar(const char str[], char chr)
+	{
+	  for(int k = 0; *(str+k) != '\0'; k++)
+	  {
+		if(*(str+k) == chr)
+			return (str+k); 
+	  }
+	 return nullptr;
+	}
+  c. -------------------------------------------------------------------
+	const char* findTheChar(const char str[], char chr)
+	{
+	  while(*(str) != '\0')
+	  {
+		if(*str == chr)
+			return str;
+		str+= 1;
+	  }
+	 return nullptr;
+	}
+ 
+
+Question 4. 
+    -------------------------------------------------------------------
+ #include <iostream>
+    using namespace std;
+
+    int* maxwell(int* a, int* b)
+    {
+        if (*a > *b)
+            return a;
+        else
+            return b;
+    }
+
+    void swap1(int* a, int* b)
+    {
+        int* temp = a;
+        a = b;
+        b = temp;
+    }
+
+    void swap2(int* a, int* b)
+    {
+        int temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+
+    int main()
+    {
+        int array[6] = { 5, 3, 4, 17, 22, 19 };
+
+        int* ptr = maxwell(array, &array[2]);		//the object in array[0] is bigger than object in array[2] so that  array = &(array[0]) and it is ptr
+        *ptr = -1;					// array[] = {-1, 3, 4, 17 ,22, 19}       ptr => &array[0] = array   *ptr = *&array[0] = array[0] = -1
+        ptr += 2;					//			      		ptr +2 = array+2 =  &array[2] = array+2 => ptr
+        ptr[1] = 9;					// array[] = {-1, 3, 4, 9, 22, 19}        ptr+1 =>  array+2+1 //  ptr[1] = array[3] => 9 
+        *(array+1) = 79;				// array[] = {-1, 79, 4, 9, 22, 19}
+
+        cout << &array[5] - ptr << endl;		// &array[5] = (array+5)		&array[5] - ptr = (array+5) - (array+2) = 3       print   "3" 
+						// ptr  = &(array[2]) = (array+2)
+
+        swap1(&array[0], &array[1]);			// nothing will be happened here since there is no reference in parameter in swap1 function.
+						// also, even if &(reference) is used in parameter in the function		
+						// it would not affect output because the array has a sequence address orderly
+						// the address in array cannot be changed.
+        swap2(array, &array[2]);			// array = {4, 79, -1, 9, 22, 19}     
+						// swap the values of array[0] and array[2]
+
+        for (int i = 0; i < 6; i++)
+            cout << array[i] << endl;			print all elements in array
+    } 
+
+
+	The print result is
+	
+	3		
+	4
+	79
+	-1
+	9
+	22
+	19
+
+First one is from " &array[5] - ptr" and others are elements of array 
+
+
+Question 5.
+    -------------------------------------------------------------------
+void removeS(char* x)
+{
+  while(*x != '\0')
+  {
+	if(*x == 'S' || *x == 's')
+	{
+	   char *temp = x;
+		while(*x != '\0')
+	   	{
+	   	  *x=*(x+1);
+	     	   x+=1;
+	   	}
+	   x=temp;
+	}
+	else
+	{
+	  x+=1;
+	}
+  }	
+}
+    -------------------------------------------------------------------
+
+
+
+
+

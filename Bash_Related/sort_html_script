@@ -1,0 +1,14 @@
+#!/bin/sh         
+
+grep -o '<td>.*<\/td>'     |            # isolates words covered by <td> and <\td>
+sed 's/<[^>]*>//g'         |            # deletes all html tag <>
+sed '/^$/d'                |            # delete empty line
+sed -n '1~2!p'             |            # getting only Hawaiian words
+sed "s/\`/\'/g"            |            # replace ` with '
+tr '[:upper:]' '[:lower:]' |            # convert all uppercase letters to lower
+sed 's/[ ,]/\n/g'          |            # replace , or space with \n to seperate words
+sed '/^$/d'                |            # delete empty line
+tr -d [:blank:]            |            # delete blanks
+sed "/[^pk\'mnwlhaeiou]/d" |            # delete all lines that contain non-Hawaiian letters
+sort -u
+

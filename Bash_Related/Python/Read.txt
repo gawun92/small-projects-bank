@@ -1,0 +1,27 @@
+This python codes is for 'shuf'
+
+
+	compile it with
+	"chmod 755 shuf.py"
+	
+	./shuf.py filename -n 2
+		// print random two lines (data from filename)
+
+	./shuf.py filename -r
+		// infinitely printing in each line (data from filename)
+	
+	./shuf.py -i 2-4
+		// print random values between 2 and 4
+			ex) 2 3 4  / 3 4 2
+	
+	./shuf.py filename
+		// print random lines (data from filename)
+	
+	./shuf.py 
+		// require enters some numbers
+			and Ctrl-D is mixing inputs and print them
+
+	some example 
+
+	./shuf.py -i 2-4 -n 4
+		print some number (2~4) in each of 4 lines 

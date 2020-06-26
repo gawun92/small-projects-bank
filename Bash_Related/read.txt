@@ -1,0 +1,11 @@
+
+
+find-**  
+if a user runs it with file.
+	it is checking whether it is ascii or utf-8.
+	ex) find-ascii
+		if is ascii, print in the list.
+
+if a user runs it with folder(directory)
+	 listing all ascii or utf-8 files reculsively.
+

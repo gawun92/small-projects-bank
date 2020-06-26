@@ -1,0 +1,44 @@
+#!/bin/bash
+
+
+string="-*- coding: utf-8 -*-"
+
+for x in "$@"
+do
+        if [[ -f $x ]]          # if the type of input is file
+          then
+
+                if [ `cat $x | grep -P '[[:^ascii:]]'` ]
+                  then
+                        check1=`cat $x | head -n 1`
+
+                        if [[ $string != $check1 ]]
+                         then
+                                echo "$x"
+                        fi
+                else
+                        echo "" > /dev/null
+                fi
+
+        elif [[ -d $x ]]        # if the type of input is directory
+          then
+                for target in `find "$x" -type f -name "*.txt"`
+
+                do
+                        if [ `cat $target | grep -P '[[:^ascii:]]'` ]
+                        then
+                                check2=`cat $target | head -n 1`
+
+                                if [[ $string != $check2 ]]
+                                then
+                                echo "$target"
+                                fi
+                        else
+                                echo "" > /dev/null
+
+                        fi
+                done
+        fi
+
+done
+
